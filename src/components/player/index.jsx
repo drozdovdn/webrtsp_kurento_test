@@ -1,18 +1,20 @@
 import React, {useEffect, useRef, useState} from 'react'
+import {Player} from 'video-react'
+import "../../../node_modules/video-react/dist/video-react.css"; // import css
 import KurentoClient from 'kurento-client';
 import {WebRtcPeer} from 'kurento-utils';
 import styled from 'styled-components'
 import {Preloader} from "../preloader";
 
 
-export const Player = ({
+export const MyPlayer = ({
                    camera,
                    kurento,
                    setStatusMessage,
                    setStatusError,
                    setActive
                 }) => {
-    const playerRef = useRef(null)
+    let playerRef = useRef(null)
     const [args, setArgs] = useState(null)
     const [reInterval, setReInterval] = useState(null)
     const [urlStream, setUrlStream] = useState('')
@@ -29,7 +31,6 @@ export const Player = ({
         let webRtcPeer = null;
         let pipeLine = null;
         let reInterval = null;
-
 
         const stop = () => {
 
@@ -219,8 +220,9 @@ export const Player = ({
         }
     },[camera, kurento])
 
-    console.log({camera})
-    console.log({kurento})
+    // console.log({camera})
+    // console.log({kurento})
+    // console.log({playerRef})
 
     return (
         <Content>
@@ -228,11 +230,15 @@ export const Player = ({
                 <>
                     <PlayerComponent
                         showPreloader={showPreloader}
-                        playsinline
-                        autoPlay
-                        muted
-                        ref={playerRef}
-                    />
+
+                    >
+                        <Player
+                            playsinline
+                            autoPlay={true}
+                            muted
+                            ref={p => playerRef.current = p?.video?.video}
+                        />
+                    </PlayerComponent>
                     {
                         showPreloader &&
                         <WrapperPreloader>
@@ -310,8 +316,8 @@ const InfoPlayerBlock = styled.div`
   transform: translate(-50%, -50%);
 `;
 
-const PlayerComponent = styled.video`
-  background: #ababab;
+const PlayerComponent = styled.div`
+  background: #000000;
   border-radius: 10px;
   width: 100%;
   height: 100%;

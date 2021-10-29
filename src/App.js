@@ -2,7 +2,7 @@ import './App.css';
 import styled from "styled-components";
 import {Primary} from "./components/button/input";
 import {useState} from "react";
-import {Player} from "./components/player";
+import {MyPlayer} from "./components/player";
 
 function App() {
 
@@ -42,7 +42,7 @@ function App() {
       <Block>
         <ItemBlock>
             <WrapperVideo>
-                <Player setStatusMessage={setStatusMessage}
+                <MyPlayer setStatusMessage={setStatusMessage}
                         setStatusError={setStatusError}
                         setActive={setActive}
                         camera={active.camera}
@@ -148,9 +148,7 @@ const WrapperError = styled.div`
 
 const WrapperVideo = styled.div`
   width: 100%;
-  height: 400px;
-  background: #ababab;
-  border-radius: 10px;
+  background: #000000;
 `;
 const ControlPanel = styled.div`
   margin-top: 30px;
