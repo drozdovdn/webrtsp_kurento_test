@@ -1,31 +1,18 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {Player} from 'video-react'
-import "../../../node_modules/video-react/dist/video-react.css"; // import css
+import "../../../node_modules/video-react/dist/video-react.css";
 import KurentoClient from 'kurento-client';
 import {WebRtcPeer} from 'kurento-utils';
 import styled from 'styled-components'
 import {Preloader} from "../preloader";
-
 
 export const MyPlayer = ({
                    camera,
                    kurento,
                    setStatusMessage,
                    setStatusError,
-                   setActive
                 }) => {
     let playerRef = useRef(null)
-    const [args, setArgs] = useState(null)
-    const [reInterval, setReInterval] = useState(null)
-    const [urlStream, setUrlStream] = useState('')
-    const [urlCamera, setUrlCamera] = useState('')
     const [showPreloader, setShowPreloader] = useState(false)
-
-
-
-    let timeoutStop;
-
-
 
     useEffect(()=>{
         let webRtcPeer = null;
@@ -44,8 +31,6 @@ export const MyPlayer = ({
                 // console.log('stop pipeLine', pipeLine)
                 pipeLine.release()
                 pipeLine = null
-                setUrlCamera('')
-                setUrlStream('')
             }
         }
         const onError = (err) => {
@@ -117,14 +102,6 @@ export const MyPlayer = ({
             setStatusError('')
             setStatusMessage('')
             start()
-            window.clearTimeout(timeoutStop)
-        }
-
-        const stopOneMinute = () => {
-            setActive({camera: '', kurento: ''})
-            setStatusError('')
-            setStatusMessage('Прошла 1 минута, поток остановлен!')
-            stop()
         }
 
         // const reconnect = () => {
@@ -154,7 +131,7 @@ export const MyPlayer = ({
                                 console.log(e)
                                 setShowPreloader(false)
                                 setStatusMessage('Есть поток !')
-                                timeoutStop = window.setTimeout(stopOneMinute, 60000)
+                                // timeoutStop = window.setTimeout(stopOneMinute, 60000)
                                 // const dashboard_content = document.getElementById('dashboard_content')
                                 // dispatch(updateShowCameras(dashboard_content.clientHeight))
 
@@ -220,96 +197,33 @@ export const MyPlayer = ({
         }
     },[camera, kurento])
 
-    // console.log({camera})
-    // console.log({kurento})
-    // console.log({playerRef})
-
     return (
         <Content>
+            <PlayerComponent
+                showPreloader={showPreloader}
+            >
+                <Video
+                ref={playerRef}
+                playsinline
+                autoPlay={true}
+                muted
+                />
+            </PlayerComponent>
             {
-                <>
-                    <PlayerComponent
-                        showPreloader={showPreloader}
+                showPreloader &&
+                <WrapperPreloader>
+                    <Preloader/>
+                </WrapperPreloader>
 
-                    >
-                        <Player
-                            playsinline
-                            autoPlay={true}
-                            muted
-                            ref={p => playerRef.current = p?.video?.video}
-                        />
-                    </PlayerComponent>
-                    {
-                        showPreloader &&
-                        <WrapperPreloader>
-                            <Preloader/>
-                        </WrapperPreloader>
-
-                    }
-                    {/*{*/}
-                    {/*    (showPreloader && urlStream === '') ?*/}
-                    {/*        <WrapperPreloader>*/}
-                    {/*            <PlayerSkeletonLoading/>*/}
-                    {/*        </WrapperPreloader> :*/}
-                    {/*        (urlStream === ERROR_REQUEST_LINK) &&*/}
-                    {/*        <InfoPlayerBlock>*/}
-                    {/*            <InfoPlayerTitle>Видеопоток недоступен</InfoPlayerTitle>*/}
-                    {/*            <InfoPlayerDesc>Проверьте подключение камеры к питанию, сети и HEAVEN connect </InfoPlayerDesc>*/}
-                    {/*            <InfoPlayerDescLink onClick={()=>repeatRequest()}>Попробовать снова</InfoPlayerDescLink>*/}
-                    {/*        </InfoPlayerBlock>*/}
-                    {/*}*/}
-                </>
             }
         </Content>
     );
 }
-
+const Video = styled.video`
+width: 100%;
+max-height: 400px;
+`;
 const WrapperPreloader = styled.div`
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-`;
-
-const InfoPlayerTitle = styled.div`
-  font-family: 'Lato', sans-serif;
-  color: #0D2733;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 19px;
-  padding-bottom: 15px;
-  position: relative;
-  &:after {
-    position: absolute;
-    width: 367px;
-    height: 1px;
-    content: '';
-    background: radial-gradient(50.04% 89779994.43% at 50% 46.28%, #FF2D5F 0%, #FFC42D 100%);
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 0;
-  }
-`;
-const InfoPlayerDesc = styled.div`
-  margin-top: 12px;
-  font-size: 12px;
-  line-height: 24px;
-  text-align: center;
-  font-family: 'Lato', sans-serif;
-  color: rgba(13, 39, 51, 0.7);
-  white-space: nowrap;
-  font-weight: 400;
-`;
-const InfoPlayerDescLink = styled.div`
-  font-weight: 600;
-  margin-top: 10px;
-  color: #017EB1;
-  cursor: pointer;
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-const InfoPlayerBlock = styled.div`
   position: absolute;
   left: 50%;
   top: 50%;
@@ -320,7 +234,6 @@ const PlayerComponent = styled.div`
   background: #000000;
   border-radius: 10px;
   width: 100%;
-  height: 100%;
   transition: all 0.1s linear;
   opacity: ${({showPreloader}) => showPreloader ? 0 : 1};
 `;

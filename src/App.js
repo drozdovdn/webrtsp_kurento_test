@@ -6,12 +6,9 @@ import {MyPlayer} from "./components/player";
 
 function App() {
 
-    const [urlCamera, setUrlCamera] = useState('rtsp://admin:Skytracking.ru@10.10.10.45:554')
-    const [urlKurento, setUrlKurento] = useState('ws://10.10.10.10:8888/kurento')
+    const [urlCamera, setUrlCamera] = useState()
+    const [urlKurento, setUrlKurento] = useState()
 
-    const [massStatus, setMassStatus] = useState([])
-
-    const [massError, setMassError] = useState([])
     const [statusMessage, setStatusMessage] = useState('')
     const [statusError, setStatusError] = useState('')
 
@@ -25,16 +22,12 @@ function App() {
         setUrlKurento(e.target.value)
     }
 
-
     const activeData = () => {
       setActive({
           camera: urlCamera,
           kurento: urlKurento,
       })
     }
-
-  console.log({urlCamera})
-  console.log({urlKurento})
   return (
     <Content>
       <Title>TEST RTSP URL</Title>
@@ -48,15 +41,6 @@ function App() {
                         camera={active.camera}
                         kurento={active.kurento}/>
             </WrapperVideo>
-            <SubTitle>
-                <p>
-                    Для экономии трафика стоит ограниченеи на воспроизведение потока,
-                    спустя 1 минуту полсе получения картинки поток закроется.
-                </p>
-                <p>
-                    Для повторного получения нажми заного кнопку "Получить поток с камеры"
-                </p>
-            </SubTitle>
             <ControlPanel>
                 <WrapperInputBlock>
                     <TitleInput>Camera rtsp url</TitleInput>
@@ -71,7 +55,7 @@ function App() {
                     <Input
                         value={urlKurento}
                         onChange={changeInputKurento}
-                        placeholder={'ws://ip_kms:8888/kurento'}
+                        placeholder={'ws://host_kms:8888/kurento'}
                     />
                 </WrapperInputBlock>
                 <Primary onClick={activeData}>Получить поток с камеры</Primary>
@@ -103,13 +87,6 @@ function App() {
 
 export default App;
 
-const SubTitle =styled.div`
-  font-size: 12px;
-  color: #b22626;
-  letter-spacing: 0.04em;
-  line-height: 20px;
-  padding: 10px 10px 0;
-`;
 const ErrorBody = styled.div`
   font-size: 14px;
   color: black;
